@@ -1,0 +1,79 @@
+#!/bin/bash
+
+PGVERSION=9.5
+PGENGINE=/usr/bin
+
+SERVICE_NAME="$2"
+if [ x"$SERVICE_NAME" = x ]; then
+    SERVICE_NAME=postgresql
+fi
+
+PGDATA="/var/lib/pgsql/data"
+PGPORT=5432
+
+PGLOG=/var/lib/pgsql/initdb.log
+
+export PGDATA
+export PGPORT
+
+if [  -x /sbin/runuser ]; then
+    SU=runuser
+else
+    SU=su
+fi
+
+
+script_result=0
+
+perform_initdb() {
+
+    if [ ! -e "$PGDATA" ]; then
+        mkdir "$PGDATA" || return 1
+        chown postgres:postgres "$PGDATA"
+        chmod go-rwx "$PGDATA"
+    fi
+    
+    [ -x /sbin/restorecon ] && /sbin/restorecon "$PGDATA"
+    
+    $SU -l postgres -c "$PGENGINE/initdb --pgdata='$PGDATA' --auth='ident'" \
+            >> "$PGLOG" 2>&1 < /dev/null
+    
+    mkdir "$PGDATA/pg_log"
+    chown postgres:postgres "$PGDATA/pg_log"
+    chmod go-rwx "$PGDATA/pg_log"
+    [ -x /sbin/restorecon ] && /sbin/restorecon "$PGDATA/pg_log"
+    
+    if [ -f "$PGDATA/PG_VERSION" ]; then
+        return 0
+    fi
+    return 1
+}
+
+initdb() {
+    if [ -f "$PGDATA/PG_VERSION" ]; then
+        echo $"Data directory is not empty!"
+        echo
+        script_result=1
+    else
+        echo -n $"Initializing database ..."
+        if perform_initdb; then
+            echo $"OK"
+        else
+            echo $"failed, see $PGLOG"
+            script_result=1
+        fi
+        echo
+    fi
+}
+
+
+case "$1" in
+    initdb)
+        initdb
+        ;;
+    *)
+        echo $"Usage: $0 {initdb} [ service_name ]
+        exit 2
+esac
+
+exit $script_result
