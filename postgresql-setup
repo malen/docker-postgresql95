@@ -72,7 +72,7 @@ case "$1" in
         initdb
         ;;
     *)
-        echo $"Usage: $0 {initdb} [ service_name ]
+        echo $"Usage: $0 {initdb} [ service_name ]"
         exit 2
 esac
 

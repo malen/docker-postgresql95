@@ -12,7 +12,7 @@ RUN yum -y install postgresql95-server; yum clean all
 RUN sed -i 's/.*requiretty$/#Defaults requiretty/' /etc/sudoers
 
 #Add shell to docker, and then run it.
-ADD ./postgresql-setup /usr/bin/postgresql-setup
+ADD ./postgresql95-setup /usr/bin/postgresql-setup
 #ADD ./start_postgres.sh /start_postgres.sh
 #ADD ./postgresql.conf /var/lib/pgsql/data/postgresql.conf
 
