@@ -25,7 +25,7 @@ ADD ./postgresql95-setup /usr/pgsql-9.5/bin/
 
 #ADD ./start_postgres.sh /start_postgres.sh
 #ADD ./postgresql.conf /var/lib/pgsql/data/postgresql.conf
-#RUN useradd -r -g postgres --uid=999 postgres
+RUN groupadd -r postgres --gid=999 && useradd -r -g postgres --uid=999 postgres
 RUN mkdir /docker-entrypoint-initdb.d
 
 ENV PG_MAJOR 9.5
