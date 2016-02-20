@@ -5,8 +5,6 @@ MAINTAINER malen <malen.ma@gmail.com>
 RUN yum -y update; yum clean all
 #RUN yum -y install sudo epel-release; yum clean all
 
-RUN groupadd -r postgres && useradd -r -g postgres postgres
-
 RUN yum -y install http://yum.postgresql.org/9.5/redhat/rhel-7-x86_64/pgdg-centos95-9.5-2.noarch.rpm
 RUN yum -y install postgresql95-server; yum clean all
 
@@ -27,7 +25,9 @@ ADD ./postgresql95-setup /usr/pgsql-9.5/bin/
 
 #ADD ./start_postgres.sh /start_postgres.sh
 #ADD ./postgresql.conf /var/lib/pgsql/data/postgresql.conf
-RUN groupadd -r postgres --gid=999 && useradd -r -g postgres --uid=999 postgres
+
+RUN useradd -r -g postgres --uid=999 postgres
+
 RUN mkdir /docker-entrypoint-initdb.d
 
 ENV PG_MAJOR 9.5
