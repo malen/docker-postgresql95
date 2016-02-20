@@ -3,7 +3,9 @@ FROM malen/centos72:latest
 MAINTAINER malen <malen.ma@gmail.com>
 
 RUN yum -y update; yum clean all
-#RUN yum -y install sudo epel-release; yum clean all
+RUN yum -y install epel-release; yum clean all
+
+RUN groupadd -r postgres --gid=999 && useradd -r -g postgres --uid=999 postgres
 
 RUN yum -y install http://yum.postgresql.org/9.5/redhat/rhel-7-x86_64/pgdg-centos95-9.5-2.noarch.rpm
 RUN yum -y install postgresql95-server; yum clean all
@@ -19,7 +21,7 @@ RUN gpg --keyserver pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4
 
 #Sudo requires a tty. fix that.
 RUN sed -i 's/.*requiretty$/#Defaults requiretty/' /etc/sudoers
-
+#
 #Add shell to docker, and then run it.
 ADD ./postgresql95-setup /usr/pgsql-9.5/bin/
 
