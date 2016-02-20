@@ -3,7 +3,7 @@ FROM malen/docker-centos72:latest
 MAINTAINER malen <malen.ma@gmail.com>
 
 RUN yum -y update; yum clean all
-RUN yum -y install sudo epel-release; yum clean all
+#RUN yum -y install sudo epel-release; yum clean all
 
 RUN yum -y install http://yum.postgresql.org/9.5/redhat/rhel-7-x86_64/pgdg-centos95-9.5-2.noarch.rpm
 RUN yum -y install postgresql95-server; yum clean all
@@ -25,6 +25,9 @@ ADD ./postgresql95-setup /usr/pgsql-9.5/bin/
 
 #ADD ./start_postgres.sh /start_postgres.sh
 #ADD ./postgresql.conf /var/lib/pgsql/data/postgresql.conf
+#RUN useradd -r -g postgres --uid=999 postgres
+RUN mkdir /docker-entrypoint-initdb.d
+
 ENV PG_MAJOR 9.5
 ENV PG_VERSION 9.5.1-1.pgdg80+1
 ENV PATH /usr/pgsql-9.5/bin:$PATH
@@ -41,13 +44,13 @@ RUN chmod +x /usr/pgsql-9.5/bin/postgresql95-setup
 
 ##RUN echo "host  all all 0.0.0.0/0" >> /var/lib/pgsql/9.5/data/pg_hba.conf
 
-#VOLUME ["/var/lib/pgsql"]
+VOLUME ["/var/lib/pgsql"]
 
 COPY docker-entrypoint.sh /
-
+RUN chmod +x /docker-entrypoint.sh
+#RUN yum -y install net-tools
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
 EXPOSE 5432
-#CMD ["/bin/bash", "/start_postgres.sh"]
 
 CMD ["postgres"]
