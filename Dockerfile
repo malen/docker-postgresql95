@@ -3,9 +3,9 @@ FROM malen/centos72:latest
 MAINTAINER malen <malen.ma@gmail.com>
 
 RUN yum -y update; yum clean all
-RUN yum -y install epel-release; yum clean all
+#RUN yum -y install sudo epel-release; yum clean all
 
-RUN groupadd -r postgres --gid=999 && useradd -r -g postgres --uid=999 postgres
+RUN groupadd -r postgres && useradd -r -g postgres postgres
 
 RUN yum -y install http://yum.postgresql.org/9.5/redhat/rhel-7-x86_64/pgdg-centos95-9.5-2.noarch.rpm
 RUN yum -y install postgresql95-server; yum clean all
