@@ -1,4 +1,4 @@
-FROM malen/docker-centos72:latest
+FROM malen/centos72:latest
 
 MAINTAINER malen <malen.ma@gmail.com>
 
